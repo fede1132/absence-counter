@@ -16,7 +16,7 @@ function App() {
   const [calendar, setCalendar] = useState(Object?.keys(calendars)?.[0]);
   const [days, setDays] = useState({})
   const [absences, setAbsences] = useState([])
-  const [result, setResult] = useState({})
+  const [result, setResult] = useState(null)
 
   const data = calendars[calendar]
 
@@ -193,6 +193,7 @@ function App() {
           absenceHours += absence["hours"]
         }
 
+        result = {}
         result["count"] = count
         result["hours"] = hours
         result["absenceHours"] = absenceHours
@@ -200,36 +201,40 @@ function App() {
       }}>
         CALCOLA
       </span>
-      <div className='flex flex-col w-full'>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Inizio lezioni:</span>
-          { result["start"] }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Fine lezioni:</span>
-          { result["end"] }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Giorni totali:</span>
-          { result["count"] }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Ore totali:</span>
-          { result["hours"] }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Ore di assenza possibili (25%):</span>
-          { result["hours"] * 0.25 }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Ore di assenza:</span>
-          { result["absenceHours"] }
-        </div>
-        <div className='flex flex-row justify-between'>
-          <span className='font-bold'>Ore di assenza rimanenti:</span>
-          { result["hours"] * 0.25 - result["absenceHours"] }
-        </div>
-      </div>
+      {
+        result !== null && (
+          <div className='flex flex-col w-full'>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Inizio lezioni:</span>
+              { result["start"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Fine lezioni:</span>
+              { result["end"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Giorni totali:</span>
+              { result["count"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Ore totali:</span>
+              { result["hours"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Ore di assenza possibili (25%):</span>
+              { result["hours"] * 0.25 }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Ore di assenza:</span>
+              { result["absenceHours"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Ore di assenza rimanenti:</span>
+              { result["hours"] * 0.25 - result["absenceHours"] }
+            </div>
+          </div>
+        )
+      }
     </div>
   );
 }
