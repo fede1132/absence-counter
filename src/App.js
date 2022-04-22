@@ -16,7 +16,7 @@ function App() {
   const [calendar, setCalendar] = useState(Object?.keys(calendars)?.[0]);
   const [days, setDays] = useState({})
   const [absences, setAbsences] = useState([])
-  const [result, setResult] = useState(null)
+  const [result, setResult] = useState({})
 
   const data = calendars[calendar]
 
@@ -150,6 +150,7 @@ function App() {
         }
       </div>
       <span className='p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xl font-bold' onClick={() => {
+        console.log(Object.keys(result))
         const start = dateToUnix(data["start"])
         const end = dateToUnix(data["end"])
         result["start"] = start.toISOString().slice(0, 10)
@@ -193,7 +194,6 @@ function App() {
           absenceHours += absence["hours"]
         }
 
-        result = {}
         result["count"] = count
         result["hours"] = hours
         result["absenceHours"] = absenceHours
@@ -202,7 +202,7 @@ function App() {
         CALCOLA
       </span>
       {
-        result !== null && (
+        Object.keys(result).length !== 0 && (
           <div className='flex flex-col w-full'>
             <div className='flex flex-row justify-between'>
               <span className='font-bold'>Inizio lezioni:</span>
