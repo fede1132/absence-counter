@@ -1,70 +1,25 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Contatore di assenze
 
-## Available Scripts
+Questa web app é nata dall'esigenza di sapere con esattezza quante ore di assenze avessi fatto e quante me ne rimanessero, l'app in sé é molto semplice, se avete suggerimenti/segnalazioni bug potete usare la scheda "Issues".
 
-In the project directory, you can run:
+Per gli sviluppatore che vogliano contribuire al progetto ogni PR é ben accetta, alcuni dettagli rapidi:
 
-### `npm start`
+**Linguaggio**: JavaScript
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**Framework**: React.JS
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**Liberie usate:**
 
-### `npm test`
+- `react-icons` - Come si evince dal nome, aggiunge svariate icone
+- `gh-pages` - Usato per sfruttare GitHub pages come web host
+- `tailwindcss` - Libreria CSS per la UI
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Utilizzo
+1) Aprite l'url della web app https://school.fede1132.me;
+2) Selezionare la propria regione;
+3) Inserire il proprio orario settimanale;
+4) Inserire le varie assenze/ritardi, esempio:
+-- **Esempio 1:** Martedì sono entrato in 2^ ora, allora inserirò nella casella `N. Ore`, il numero `1`, ossia il numero di ore per cui mi sono assentato, per i ritardi l'inserimento del giorno é facoltativo;
+-- **Esempio 2:** Il 24/2 ho fatto un assenza, allora inserirò come dati, il giorno (es. Martedì) oppure la data, in questo esempio `24/2`, successivamente nella casella `N. Ore` posso fare due cose: lasciare vuota la casella o inserire il numero `0`;
+5) Schiacciare il tasto blu "CALCOLA" in fondo alla pagina verrà visualizzati i vari dati, incluso ovviamente, le ore di assenza fatte e le rimanenti.
