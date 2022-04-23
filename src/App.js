@@ -43,6 +43,13 @@ function App() {
     return newDate
   }
 
+  const isToday = (someDate) => {
+    const today = new Date()
+    return someDate.getDate() === today.getDate() &&
+      someDate.getMonth() === today.getMonth() &&
+      someDate.getFullYear() === today.getFullYear()
+  }
+
   return (
     <div className='min-w-screen min-h-screen w-full h-full p-5 flex flex-col items-center gap-3'>
       <span className='text-xl font-bold'>Seleziona la tua regione</span>
@@ -76,8 +83,8 @@ function App() {
       <div className='flex flex-col gap-2'>
         {
           week.map((day, i) => {
-            if (days[day] === undefined) {
-              days[day] = {
+            if (days[i] === undefined) {
+              days[i] = {
                 enabled: i !== 6,
                 hours: 0
               }
@@ -86,7 +93,7 @@ function App() {
             return (
               <div key={day} className='flex flex-row justify-between p-3 shadow-md rounded-md items-center'>
                 <span><input type="checkbox" onChange={(e) => {
-                  days[day]["enabled"] = e?.currentTarget?.checked
+                  days[i]["enabled"] = e?.currentTarget?.checked
                   setDays({...days})
                   absences.filter((absence) => {
                     return absence["day"] === i
@@ -102,7 +109,7 @@ function App() {
                   })
                 }} defaultChecked={i !== 6} /> { day }</span>
                 <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} value={days?.[day]?.["hours"]} placeholder="N. Ore" onChange={(e) => {
-                  days[day]["hours"] = parseInt(e.currentTarget.value)
+                  days[i]["hours"] = parseInt(e.currentTarget.value)
                   setDays({...days})
                 }} />
               </div>
@@ -149,7 +156,7 @@ function App() {
                     }
                     const result = dateToUnix(date[0])
                     absences[index]["day"] = result.getDay()
-                    absences[index]["hours"] = days[week.at(result.getDay())]["hours"]
+                    absences[index]["hours"] = days[result.getDay()]["hours"]
                     setAbsences([...absences])
                   }} />
                 </div>
@@ -192,8 +199,12 @@ function App() {
 
         let count = 0
         let hours = 0
-        while (start.getUTCFullYear() < end.getUTCFullYear() || start.getMonth() <= end.getMonth() || start.getDate() <= end.getDate()) {
+        let current = 0
+        while (start.getUTCFullYear() < end.getUTCFullYear() || start.getMonth() < end.getMonth() || start.getDate() <= end.getDate()) {
           start.setDate(start.getDate()+1)
+          if (isToday(start)) {
+            current = count+1
+          }
           const holiday = holidays.find((h, i) => {
             if (h.end !== undefined) {
               return start.getTime() >= h.start.getTime() && start.getTime() <= h.end.getTime()
@@ -203,18 +214,17 @@ function App() {
           if (holiday !== undefined) {
             continue
           }
-          if (!days[week.at(start.getDay())]?.["enabled"]) {
+          if (!days[start.getDay()]?.["enabled"]) {
             continue
           }
-          
           count++
-          hours += days[week.at(start.getDay())]?.["hours"]
+          hours += days[start.getDay()]?.["hours"]
         }
 
         let absenceHours = 0
         for (const absence of absences) {
           if (isNaN(absence["hours"]) || absence["hours"] === 0) {
-            absenceHours += days[week.at(absence["day"])]["hours"]
+            absenceHours += days[absence["day"]]["hours"]
             continue
           }
           absenceHours += absence["hours"]
@@ -223,6 +233,8 @@ function App() {
         result["count"] = count
         result["hours"] = hours
         result["absenceHours"] = absenceHours
+        console.log(end)
+        result["days_before_end"] = count - current
         setResult({...result})
         localStorage.setItem("data", JSON.stringify({
           result,
@@ -234,7 +246,7 @@ function App() {
       </span>
       {
         Object.keys(result).length !== 0 && (
-          <div className='flex flex-col w-full'>
+          <div className='result flex flex-col w-full'>
             <div className='flex flex-row justify-between'>
               <span className='font-bold'>Inizio lezioni:</span>
               { result["start"] }
@@ -246,6 +258,10 @@ function App() {
             <div className='flex flex-row justify-between'>
               <span className='font-bold'>Giorni totali:</span>
               { result["count"] }
+            </div>
+            <div className='flex flex-row justify-between'>
+              <span className='font-bold'>Giorni alla fine della scuola:</span>
+              { result["days_before_end"] }
             </div>
             <div className='flex flex-row justify-between'>
               <span className='font-bold'>Ore totali:</span>
@@ -268,7 +284,7 @@ function App() {
       }
       <div className='flex flex-col mt-2'>
         <span className='flex flex-row justify-center items-center gap-1'>Made with <FaHeart className='text-red-600' /> by Federico Gualandri</span>
-        <span className='flex flex-row justify-center items-center cursor-pointer gap-1 text-blue-600 underline' onClick={() => window.location.href = "https://github.com/fede1132/absence-counter/"}><FaGithub className='text-black' /> Codice sorgente disponibile su GitHub</span>
+        <a className='flex flex-row justify-center items-center cursor-pointer gap-1 text-blue-600 underline' href="https://github.com/fede1132/absence-counter/"><FaGithub className='text-black' /> Codice sorgente disponibile su GitHub</a>
       </div>
     </div>
   );
