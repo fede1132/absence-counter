@@ -27,8 +27,18 @@ function App() {
       setDays({...data?.["days"]})
       setAbsences([...data?.["absences"]])
       setResult({...data?.["result"]})
+      return
     }
-  }, [])
+    for (const index in week) {
+      if (days[index] === undefined) {
+        days[index] = {
+          enabled: index !== 6,
+          hours: 0
+        }
+        setDays({...days})
+      }
+    }
+  }, [days])
 
   const dateToUnix = (date) => {
     if (!date) return undefined
@@ -83,15 +93,8 @@ function App() {
       <div className='flex flex-col gap-2'>
         {
           week.map((day, i) => {
-            if (days[i] === undefined) {
-              days[i] = {
-                enabled: i !== 6,
-                hours: 0
-              }
-              setDays({...days})
-            }
             return (
-              <div key={day} className='flex flex-row justify-between p-3 shadow-md rounded-md items-center'>
+              <div key={i} className='flex flex-row justify-between p-3 shadow-md rounded-md items-center'>
                 <span><input type="checkbox" onChange={(e) => {
                   days[i]["enabled"] = e?.currentTarget?.checked
                   setDays({...days})
@@ -108,7 +111,7 @@ function App() {
                     absence[day] = nextDay
                   })
                 }} defaultChecked={i !== 6} /> { day }</span>
-                <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} value={days?.[day]?.["hours"]} placeholder="N. Ore" onChange={(e) => {
+                <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} defaultValue={days?.[i]?.["hours"]} placeholder="N. Ore" onChange={(e) => {
                   days[i]["hours"] = parseInt(e.currentTarget.value)
                   setDays({...days})
                 }} />
@@ -233,7 +236,6 @@ function App() {
         result["count"] = count
         result["hours"] = hours
         result["absenceHours"] = absenceHours
-        console.log(end)
         result["days_before_end"] = count - current
         setResult({...result})
         localStorage.setItem("data", JSON.stringify({
