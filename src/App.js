@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { FaPlus, FaTrashAlt } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import { FaPlus, FaTrashAlt, FaHeart, FaGithub } from 'react-icons/fa'
 
 const calendars = require('./calendar.json')
 const week = [
@@ -11,6 +11,7 @@ const week = [
   'Sabato',
   'Domenica'
 ]
+const re = new RegExp(/^(3[01]|[12][0-9]|[1-9])\/(1[0-2]|0?[1-9])$/)
 
 function App() {
   const [calendar, setCalendar] = useState(Object?.keys(calendars)?.[0]);
@@ -19,6 +20,15 @@ function App() {
   const [result, setResult] = useState({})
 
   const data = calendars[calendar]
+
+  useEffect(() => {
+    if (localStorage.getItem("data") !== null) {
+      const data = JSON.parse(localStorage.getItem("data"))
+      setDays({...data?.["days"]})
+      setAbsences([...data?.["absences"]])
+      setResult({...data?.["result"]})
+    }
+  }, [])
 
   const dateToUnix = (date) => {
     if (!date) return undefined
@@ -35,18 +45,16 @@ function App() {
 
   return (
     <div className='min-w-screen min-h-screen w-full h-full p-5 flex flex-col items-center gap-3'>
-      <div className='flex flex-row justify-center items-center gap-3'>
-        <span className='font-bold'>Seleziona la tua regione:</span>
-        <select onChange={(e) => setCalendar(e?.currentTarget?.value)} className='p-1 border shadow-md'>
-          {
-            Object.keys(calendars).map((k) => {
-              return (
-                <option key={k}>{ k }</option>
-              )
-            })
-          }
-        </select>
-      </div>
+      <span className='text-xl font-bold'>Seleziona la tua regione</span>
+      <select onChange={(e) => setCalendar(e?.currentTarget?.value)} className='p-1 border shadow-md'>
+        {
+          Object.keys(calendars).map((k) => {
+            return (
+              <option key={k}>{ k }</option>
+            )
+          })
+        }
+      </select>
       <span className='text-xl font-bold'>Inizio lezioni</span>
       {
         <input className='p-1 border shadow-md' type="date" defaultValue={dateToUnix(data["start"]).toISOString().substring(0, 10)} />
@@ -93,7 +101,7 @@ function App() {
                     absence[day] = nextDay
                   })
                 }} defaultChecked={i !== 6} /> { day }</span>
-                <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} placeholder="N. Ore" onChange={(e) => {
+                <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} value={days?.[day]?.["hours"]} placeholder="N. Ore" onChange={(e) => {
                   days[day]["hours"] = parseInt(e.currentTarget.value)
                   setDays({...days})
                 }} />
@@ -117,18 +125,33 @@ function App() {
           absences.map((absence, index) => {
             return (
               <div key={index} className='flex flex-col p-3 gap-2 cursor-pointer hover:bg-slate-100 shadow-md rounded-md items-center'>
-                <div className='w-full flex justify-between items-center'>
+                <div className='w-full flex justify-between items-center gap-2'>
                   <span className='font-bold'>Giorno: </span>
                   <select className='w-2/4 p-1 border shadow-md rounded-lg' value={week.at(absence["day"])} onChange={(e) => {
                     absences[index]["day"] = week.indexOf(e.target.value)
                     setAbsences([...absences])
-                  }}> { week.filter((day) => {
-                    return days?.[day]["enabled"] === true
-                  }).map((day) => {
-                    return (
-                      <option key={day}>{day}</option>
-                    )
-                  }) } </select>
+                  }}> 
+                    { week.filter((day) => {
+                      return days?.[day]["enabled"] === true
+                    }).map((day) => {
+                      return (
+                        <option key={day}>{day}</option>
+                      )
+                    }) }
+                  </select>
+                  <span>o</span>
+                  <input className='w-2/4 p-1 border shadow-md rounded-lg invalid:border-red-600' type={"text"} placeholder="Data (es. 22/04)" onChange={(e) => {
+                    e.currentTarget.removeAttribute('invalid')
+                    const date = re.exec(e?.currentTarget?.value)
+                    if (date===null) {
+                      e.currentTarget.toggleAttribute('invalid')
+                      return
+                    }
+                    const result = dateToUnix(date[0])
+                    absences[index]["day"] = result.getDay()
+                    absences[index]["hours"] = days[week.at(result.getDay())]["hours"]
+                    setAbsences([...absences])
+                  }} />
                 </div>
                 <div className='w-full flex justify-between items-center'>
                   <span className='font-bold'>Ore di assenza: </span>
@@ -149,8 +172,11 @@ function App() {
           })
         }
       </div>
-      <span className='p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xl font-bold' onClick={() => {
-        console.log(Object.keys(result))
+      <span className='p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xl font-bold cursor-pointer' onClick={() => {
+        localStorage.setItem("data", JSON.stringify({
+          absences,
+          days
+        }))
         const start = dateToUnix(data["start"])
         const end = dateToUnix(data["end"])
         result["start"] = start.toISOString().slice(0, 10)
@@ -198,6 +224,11 @@ function App() {
         result["hours"] = hours
         result["absenceHours"] = absenceHours
         setResult({...result})
+        localStorage.setItem("data", JSON.stringify({
+          result,
+          absences,
+          days
+        }))
       }}>
         CALCOLA
       </span>
@@ -235,6 +266,10 @@ function App() {
           </div>
         )
       }
+      <div className='flex flex-col mt-2'>
+        <span className='flex flex-row justify-center items-center gap-1'>Made with <FaHeart className='text-red-600' /> by Federico Gualandri</span>
+        <span className='flex flex-row justify-center items-center cursor-pointer gap-1 text-blue-600 underline' onClick={() => window.location.href = "https://github.com/fede1132/absence-counter/"}><FaGithub className='text-black' /> Codice sorgente disponibile su GitHub</span>
+      </div>
     </div>
   );
 }
