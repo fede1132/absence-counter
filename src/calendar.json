@@ -30,42 +30,7 @@
                 "start": "1/05"
             },
             {
-                "name": "Santo Patrono",
-                "start": "2/06"
-            }
-        ]
-    },
-    "VENETO": {
-        "start": "13/09",
-        "holidays": [
-            {
-                "name": "Festa di tutti i santi",
-                "start": "1/11"
-            },
-            {
-                "name": "Immacolata concezione",
-                "start": "8/12"
-            },
-            {
-                "name": "Natale",
-                "start": "24/12",
-                "end": "06/01"
-            },
-            {
-                "name": "Pasqua",
-                "start": "14/04",
-                "end": "19/04"
-            },
-            {
-                "name": "Liberazione",
-                "start": "25/04"
-            },
-            {
-                "name": "Festa dei lavoratori",
-                "start": "1/05"
-            },
-            {
-                "name": "Santo Patrono",
+                "name": "Festa della repubblica",
                 "start": "2/06"
             }
         ]

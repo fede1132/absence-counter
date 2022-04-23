@@ -15,29 +15,32 @@ const re = new RegExp(/^(3[01]|[12][0-9]|[1-9])\/(1[0-2]|0?[1-9])$/)
 
 function App() {
   const [calendar, setCalendar] = useState(Object?.keys(calendars)?.[0]);
-  const [days, setDays] = useState({})
-  const [absences, setAbsences] = useState([])
-  const [result, setResult] = useState({})
+  const [days, setDays] = useState(null)
+  const [absences, setAbsences] = useState(null)
+  const [result, setResult] = useState(null)
 
   const data = calendars[calendar]
 
   useEffect(() => {
     if (localStorage.getItem("data") !== null) {
       const data = JSON.parse(localStorage.getItem("data"))
-      if (!Object.keys(days)?.length) setDays({...data?.["days"]})
-      if (!absences?.length) setAbsences([...data?.["absences"]])
-      if (!Object.keys(result)?.length) setResult({...data?.["result"]})
+      if (!days) setDays([...data?.["days"]])
+      if (!absences) setAbsences([...data?.["absences"]])
+      if (!result) setResult({...data?.["result"]})
       return
     }
-    for (const index in week) {
-      if (days[index] === undefined) {
-        days[index] = {
-          enabled: index !== 6,
+    const days = []
+    for (let i=0;i<week.length;i++) {
+      if (!days?.[i]) {
+        days[i] = {
+          enabled: i !== 6,
           hours: 0
         }
-        setDays({...days})
       }
     }
+    setDays([...days])
+    setAbsences([])
+    setResult({})
   }, [days, absences, result])
 
   const dateToUnix = (date) => {
@@ -97,7 +100,7 @@ function App() {
               <div key={i} className='flex flex-row justify-between p-3 shadow-md rounded-md items-center'>
                 <span><input type="checkbox" onChange={(e) => {
                   days[i]["enabled"] = e?.currentTarget?.checked
-                  setDays({...days})
+                  setDays([...days])
                   absences.filter((absence) => {
                     return absence["day"] === i
                   }).forEach((absence) => {
@@ -113,7 +116,7 @@ function App() {
                 }} defaultChecked={i !== 6} /> { day }</span>
                 <input className='w-2/4 p-1 border shadow-md rounded-lg' type={"number"} defaultValue={days?.[i]?.["hours"]} placeholder="N. Ore" onChange={(e) => {
                   days[i]["hours"] = parseInt(e.currentTarget.value)
-                  setDays({...days})
+                  setDays([...days])
                 }} />
               </div>
             )
@@ -123,7 +126,7 @@ function App() {
       <span className='text-xl font-bold'>Assenze/Ritardi</span>
       <div className='flex flex-col gap-2'>
         <div className='flex flex-row p-3 gap-2 cursor-pointer hover:bg-slate-100 shadow-md rounded-md items-center' onClick={() => {
-          setAbsences([{
+          if (absences !== null) setAbsences([{
             day: 0,
             hours: 0
           }, ...absences])
@@ -132,7 +135,7 @@ function App() {
           <span>Aggiungi assenza/ritardo</span>
         </div>
         {
-          absences.map((absence, index) => {
+          absences?.map((absence, index) => {
             return (
               <div key={index} className='flex flex-col p-3 gap-2 cursor-pointer hover:bg-slate-100 shadow-md rounded-md items-center'>
                 <div className='w-full flex justify-between items-center gap-2'>
@@ -171,7 +174,7 @@ function App() {
                   }} />
                 </div>
                 <span className='w-full rounded-lg flex flex-row items-center justify-center gap-2 bg-red-600 text-white hover:bg-red-700 p-2' onClick={() => {
-                  absences.splice(index, 1)
+                  absences?.splice(index, 1)
                   setAbsences([...absences])
                 }}>
                   <FaTrashAlt />
@@ -222,6 +225,7 @@ function App() {
           }
           count++
           hours += days[start.getDay()]?.["hours"]
+          console.log(start)
         }
 
         let absenceHours = 0
@@ -247,7 +251,7 @@ function App() {
         CALCOLA
       </span>
       {
-        Object.keys(result).length !== 0 && (
+        result && Object.keys(result).length !== 0 && (
           <div className='result flex flex-col w-full'>
             <div className='flex flex-row justify-between'>
               <span className='font-bold'>Inizio lezioni:</span>
