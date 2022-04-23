@@ -24,9 +24,9 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("data") !== null) {
       const data = JSON.parse(localStorage.getItem("data"))
-      setDays({...data?.["days"]})
-      setAbsences([...data?.["absences"]])
-      setResult({...data?.["result"]})
+      if (!Object.keys(days)?.length) setDays({...data?.["days"]})
+      if (!absences?.length) setAbsences([...data?.["absences"]])
+      if (!Object.keys(result)?.length) setResult({...data?.["result"]})
       return
     }
     for (const index in week) {
@@ -38,7 +38,7 @@ function App() {
         setDays({...days})
       }
     }
-  }, [days])
+  }, [days, absences, result])
 
   const dateToUnix = (date) => {
     if (!date) return undefined
@@ -141,8 +141,8 @@ function App() {
                     absences[index]["day"] = week.indexOf(e.target.value)
                     setAbsences([...absences])
                   }}> 
-                    { week.filter((day) => {
-                      return days?.[day]["enabled"] === true
+                    { week.filter((day, i) => {
+                      return days?.[i]?.["enabled"] === true
                     }).map((day) => {
                       return (
                         <option key={day}>{day}</option>
