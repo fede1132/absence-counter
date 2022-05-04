@@ -39,6 +39,7 @@ export default function Login({ absences, setAbsences }) {
                 await argo.schede()
                 const data = await argo.assenze()
 
+                absences = []
                 for (const assenza of data?.["data"]) {
                     const date = new Date(assenza?.["datAssenza"])
                     absences = [...absences, {
